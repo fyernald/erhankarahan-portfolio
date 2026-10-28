@@ -75,7 +75,7 @@ Media is served only through `/media/*`: strict key format, `X-Content-Type-Opti
 - Nonce-based Content-Security-Policy (`strict-dynamic`) per request, HSTS, `X-Frame-Options: DENY`, strict referrer and permissions policies.
 - Rich text is rendered from the editor's JSON through the same schema (unknown nodes rejected), sanitised with an allow-list when saved **and** again when rendered. Images/videos may only point at our own `/media` files; links are limited to http(s)/mailto.
 - Contact form: Zod validation, honeypot field, per-IP rate limiting (IPs stored only as HMAC hashes).
-- Postgres, S3 and ClamAV are on an internal Docker network; only Caddy is exposed. Containers run as non-root with `no-new-privileges`; the app container is read-only.
+- Postgres and S3 are on an internal Docker network without internet access; ClamAV also joins the outbound network so it can download virus definition updates, but publishes no ports. Only Caddy (or nginx on the host) is exposed. Containers run as non-root with `no-new-privileges`; the app container is read-only.
 
 ## Local development
 
