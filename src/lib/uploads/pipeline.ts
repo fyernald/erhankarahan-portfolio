@@ -87,17 +87,18 @@ async function persist(file: VerifiedFile, asset: ProcessedAsset, uploadedById: 
   const storageKey = `${STORAGE_FOLDERS[file.kind]}/${id}.${asset.primary.extension}`;
   const posterKey = asset.poster ? `${STORAGE_FOLDERS.poster}/${id}.${asset.poster.extension}` : null;
 
-  await storage.putFile({
-    key: storageKey,
-    filePath: asset.primary.path,
-    contentType: asset.primary.contentType,
-    contentDisposition: asset.contentDisposition,
-  });
-  if (asset.poster && posterKey) {
-    await storage.putFile({ key: posterKey, filePath: asset.poster.path, contentType: asset.poster.contentType });
-  }
-
+  const storedKeys = [storageKey, ...(posterKey ? [posterKey] : [])];
   try {
+    await storage.putFile({
+      key: storageKey,
+      filePath: asset.primary.path,
+      contentType: asset.primary.contentType,
+      contentDisposition: asset.contentDisposition,
+    });
+    if (asset.poster && posterKey) {
+      await storage.putFile({ key: posterKey, filePath: asset.poster.path, contentType: asset.poster.contentType });
+    }
+
     const storedSize = (await stat(asset.primary.path)).size;
     const [row] = await getDb()
       .insert(media)
@@ -121,7 +122,8 @@ async function persist(file: VerifiedFile, asset: ProcessedAsset, uploadedById: 
       .returning();
     return toMediaItem(row);
   } catch (error) {
-    await storage.deleteMany([storageKey, ...(posterKey ? [posterKey] : [])]).catch(() => undefined);
+    // Roll back anything already written so failed uploads never leave orphaned objects.
+    await storage.deleteMany(storedKeys).catch(() => undefined);
     throw error;
   }
 }
