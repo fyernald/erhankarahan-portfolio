@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
+import { NO_TRANSLATE_HEADER, isNoTranslatePath } from "@/lib/no-translate";
 import { buildContentSecurityPolicy } from "@/lib/security/csp";
 
 const DASHBOARD_PREFIX = "/dashboard";
@@ -27,6 +28,8 @@ export function proxy(request: NextRequest) {
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-nonce", nonce);
   requestHeaders.set("Content-Security-Policy", csp);
+  requestHeaders.delete(NO_TRANSLATE_HEADER);
+  if (isNoTranslatePath(pathname)) requestHeaders.set(NO_TRANSLATE_HEADER, "1");
 
   const response = NextResponse.next({ request: { headers: requestHeaders } });
   response.headers.set("Content-Security-Policy", csp);
