@@ -84,7 +84,9 @@ services:
       timeout: 10s
       start_period: 300s
       retries: 3
-    networks: [internal]
+    # `edge` gives freshclam outbound internet to update virus definitions; no ports
+    # are published, so nothing outside Docker can reach clamd.
+    networks: [internal, edge]
 
   caddy:
     image: caddy:2-alpine
