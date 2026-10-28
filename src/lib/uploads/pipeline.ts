@@ -1,6 +1,7 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
 import { stat } from "node:fs/promises";
+import { sum } from "drizzle-orm";
 import { getDb } from "@/lib/db";
 import { media } from "@/lib/db/schema";
 import { env } from "@/lib/env";
@@ -81,7 +82,24 @@ async function scanForMalware(file: VerifiedFile) {
   }
 }
 
+/** Rejects the upload if storing it would push total media past STORAGE_LIMIT_GB. */
+async function enforceStorageQuota(storedSize: number, asset: ProcessedAsset) {
+  const posterSize = asset.poster ? (await stat(asset.poster.path)).size : 0;
+  const [{ used }] = await getDb().select({ used: sum(media.sizeBytes) }).from(media);
+  const usedBytes = Number(used ?? 0);
+  const limit = env().STORAGE_LIMIT_GB;
+  if (usedBytes + storedSize + posterSize > limit) {
+    throw new UploadError(
+      `Storage is full: ${formatBytes(usedBytes)} of ${formatBytes(limit)} used. Delete some files to free up space.`,
+      507,
+    );
+  }
+}
+
 async function persist(file: VerifiedFile, asset: ProcessedAsset, uploadedById: string): Promise<MediaItem> {
+  const storedSize = (await stat(asset.primary.path)).size;
+  await enforceStorageQuota(storedSize, asset);
+
   const storage = getStorage();
   const id = randomUUID();
   const storageKey = `${STORAGE_FOLDERS[file.kind]}/${id}.${asset.primary.extension}`;
@@ -99,7 +117,6 @@ async function persist(file: VerifiedFile, asset: ProcessedAsset, uploadedById: 
       await storage.putFile({ key: posterKey, filePath: asset.poster.path, contentType: asset.poster.contentType });
     }
 
-    const storedSize = (await stat(asset.primary.path)).size;
     const [row] = await getDb()
       .insert(media)
       .values({

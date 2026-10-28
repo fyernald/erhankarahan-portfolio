@@ -67,7 +67,7 @@ docker/                   Caddyfile, nginx site config, SeaweedFS entrypoint
    - Videos are validated with ffprobe and **remuxed** with ffmpeg (only the first video + audio stream kept, all metadata dropped, `-protocol_whitelist file` so crafted inputs can't reach the network or other files). A poster frame is generated.
    - PDFs are rejected if they contain JavaScript, launch actions, embedded files, XFA, etc. — including inside compressed object streams and hex-escaped names.
    - Office files are rejected if they contain macros, ActiveX, embedded OLE objects, remote template injection or look like zip bombs.
-5. **Store** under a random server-generated key in a **private** bucket, then record metadata. Failures roll back.
+5. **Store** under a random server-generated key in a **private** bucket, then record metadata. Failures roll back. Total media is capped at `STORAGE_LIMIT_GB` (default 30 GB): uploads that would exceed it are refused with "Storage is full", and the storage service itself never holds more than that many 1 GB volumes.
 
 Media is served only through `/media/*`: strict key format, `X-Content-Type-Options: nosniff`, a sandboxing CSP and `Content-Disposition: attachment` for documents. Range requests are supported for video seeking.
 
