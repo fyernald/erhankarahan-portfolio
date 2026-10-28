@@ -150,6 +150,8 @@ Recommended VPS: 2 vCPU / 4 GB RAM (ClamAV alone uses ~1.5 GB), Ubuntu 24.04, Do
 docker compose -f docker-compose.yml -f docker-compose.nginx.yml up -d --build
 ```
 
+If port 3000 is already used on the host, set `APP_PORT` in `.env` (e.g. `APP_PORT=3410`) and change the `upstream` port in the nginx config to match. Obtain the certificate (`certbot certonly --nginx -d erhankarahan.com -d www.erhankarahan.com`) before enabling the site, because nginx won't load a config whose certificate files don't exist yet.
+
 The config matches the Caddyfile: `/api/uploads` accepts bodies up to 2100 MB and streams them unbuffered with 30-minute timeouts, every other path is capped at 10 MB, and `X-Real-IP`/`X-Forwarded-For` are overwritten with the real client address. Without those directives nginx answers large uploads with `413` and lets clients spoof the IP used for rate limiting.
 
 **Backups** (run from cron):
