@@ -23,7 +23,13 @@ const nextConfig: NextConfig = {
   // Cache Components is disabled on purpose: almost every page reads the database
   // and the CSP nonce, so request-time rendering is the simpler, safer model here.
   cacheComponents: false,
-  serverExternalPackages: ["sharp", "pg", "busboy", "yauzl"],
+  // `file-type` is kept external so it and `strtok3` share one module instance.
+  serverExternalPackages: ["sharp", "pg", "busboy", "yauzl", "file-type"],
+  // `file-type` loads `strtok3` (for `fileTypeFromFile`) through a non-literal
+  // dynamic import that the standalone tracer cannot follow, so ship it explicitly.
+  outputFileTracingIncludes: {
+    "/api/uploads": ["./node_modules/strtok3/**/*"],
+  },
   experimental: {
     serverActions: {
       bodySizeLimit: "2mb",

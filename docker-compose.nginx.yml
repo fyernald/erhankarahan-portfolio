@@ -1,0 +1,9 @@
+# Override for hosts that terminate TLS with nginx instead of Caddy:
+#   docker compose -f docker-compose.yml -f docker-compose.nginx.yml up -d --build
+# Publishes the app on localhost only and keeps the Caddy service from starting.
+services:
+  app:
+    ports: ["127.0.0.1:3000:3000"]
+
+  caddy:
+    profiles: [caddy]

@@ -3,7 +3,7 @@ import { createHmac } from "node:crypto";
 import { env } from "@/lib/env";
 
 /**
- * Resolves the client IP. The reverse proxy (Caddy) overwrites `X-Real-IP`,
+ * Resolves the client IP. The reverse proxy (Caddy or nginx) overwrites `X-Real-IP`,
  * so it is trusted first; the left-most `X-Forwarded-For` entry is a fallback.
  */
 export function getClientIp(headers: Headers): string {
