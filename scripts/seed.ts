@@ -1,3 +1,4 @@
+import "./lib/load-env";
 import { count } from "drizzle-orm";
 import { experiences, siteSettings, skills } from "../src/lib/db/schema";
 import { connect } from "./lib/db";

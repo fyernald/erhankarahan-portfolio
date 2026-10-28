@@ -32,6 +32,9 @@ const envSchema = z.object({
   UPLOAD_MAX_IMAGE_MB: megabytes(25),
   UPLOAD_MAX_VIDEO_MB: megabytes(2048),
   UPLOAD_MAX_DOCUMENT_MB: megabytes(25),
+  /** Full paths to ffmpeg/ffprobe, for when they are installed but not on the server's PATH. */
+  FFMPEG_PATH: z.string().min(1).default("ffmpeg"),
+  FFPROBE_PATH: z.string().min(1).default("ffprobe"),
 });
 
 export type Env = z.infer<typeof envSchema>;

@@ -1,3 +1,4 @@
+import "./lib/load-env";
 import { randomUUID } from "node:crypto";
 import { stdin as input, stdout as output } from "node:process";
 import { createInterface } from "node:readline/promises";

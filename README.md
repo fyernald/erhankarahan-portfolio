@@ -79,13 +79,13 @@ Media is served only through `/media/*`: strict key format, `X-Content-Type-Opti
 
 ## Local development
 
-Requirements: Node.js ≥ 20.9, Docker (for Postgres/S3), ffmpeg (`brew install ffmpeg` / `apt install ffmpeg`) for video uploads.
+Requirements: Node.js ≥ 20.12, Docker (for Postgres/S3), ffmpeg (`brew install ffmpeg` / `apt install ffmpeg` / `winget install Gyan.FFmpeg`) for video uploads. If ffmpeg isn't on the app's PATH (e.g. an editor started before installing it), set `FFMPEG_PATH` and `FFPROBE_PATH` in `.env.local` to the full paths.
 
 ```bash
 cp .env.example .env.local
 ```
 
-Generate secrets for `BETTER_AUTH_SECRET` and `IP_HASH_SECRET` (`openssl rand -hex 32`), and set `APP_URL=http://localhost:3000`.
+Generate secrets for `BETTER_AUTH_SECRET` and `IP_HASH_SECRET` (`openssl rand -hex 32`), and set `APP_URL=http://localhost:3000`, `CLAMAV_HOST=` and `UPLOAD_REQUIRE_SCAN=false` (no virus scanner locally). The `db:*` and `admin:create` scripts read `.env.local` and `.env` the same way `next dev` does.
 
 ```bash
 docker compose -f docker-compose.dev.yml up -d
