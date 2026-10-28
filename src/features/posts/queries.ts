@@ -1,5 +1,5 @@
 import "server-only";
-import { and, arrayContains, count, desc, eq, ilike, ne, sql, type SQL } from "drizzle-orm";
+import { and, arrayContains, arrayOverlaps, count, desc, eq, ilike, ne, sql, type SQL } from "drizzle-orm";
 import { getDb } from "@/lib/db";
 import { posts } from "@/lib/db/schema";
 import { paginate, type Paginated } from "@/lib/utils/pagination";
@@ -60,7 +60,7 @@ export async function getPublishedPostBySlug(slug: string): Promise<PostDetail |
 }
 
 export async function listRelatedPosts(post: PostListItem, limit = 3): Promise<PostListItem[]> {
-  const sharesTag = post.tags.length ? sql`${posts.tags} && ${post.tags}::text[]` : sql`false`;
+  const sharesTag = post.tags.length ? arrayOverlaps(posts.tags, post.tags) : sql`false`;
   const rows = await getDb().query.posts.findMany({
     where: and(publishedOnly, ne(posts.id, post.id)),
     with: { cover: true },

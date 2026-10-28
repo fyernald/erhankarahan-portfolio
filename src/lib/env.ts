@@ -31,7 +31,7 @@ const envSchema = z.object({
   UPLOAD_TMP_DIR: z.string().optional(),
   UPLOAD_MAX_IMAGE_MB: megabytes(25),
   UPLOAD_MAX_VIDEO_MB: megabytes(2048),
-  UPLOAD_MAX_DOCUMENT_MB: megabytes(50),
+  UPLOAD_MAX_DOCUMENT_MB: megabytes(25),
 });
 
 export type Env = z.infer<typeof envSchema>;

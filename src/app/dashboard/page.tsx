@@ -36,7 +36,7 @@ export default async function DashboardOverviewPage() {
       />
 
       <div className="flex flex-col gap-6">
-        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Key figures">
+        <section className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4" aria-label="Key figures">
           <StatTile
             label="Published posts"
             value={String(counts.publishedPosts)}

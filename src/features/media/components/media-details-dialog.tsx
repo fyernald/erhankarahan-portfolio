@@ -9,7 +9,8 @@ import { Dialog } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useServerAction } from "@/hooks/use-server-action";
-import { formatBytes, formatDate, formatDuration } from "@/lib/utils/format";
+import { TimeAgo } from "@/components/ui/time-ago";
+import { formatBytes, formatDuration } from "@/lib/utils/format";
 import { deleteMedia, getMediaUsage, updateMediaAlt } from "../actions";
 import type { MediaItem } from "../types";
 import { MediaPreview } from "./media-preview";
@@ -50,7 +51,6 @@ export function MediaDetailsDialog({ item, onClose, onDeleted, onUpdated }: Medi
     ["Size", formatBytes(item.sizeBytes)],
     ...(item.width && item.height ? [["Dimensions", `${item.width} × ${item.height}px`] as [string, string]] : []),
     ...(item.durationSeconds ? [["Duration", formatDuration(item.durationSeconds)] as [string, string]] : []),
-    ["Uploaded", formatDate(item.createdAt, "MMM d, yyyy 'at' HH:mm")],
   ];
 
   async function copyUrl() {
@@ -71,6 +71,10 @@ export function MediaDetailsDialog({ item, onClose, onDeleted, onUpdated }: Medi
                   <dd className="truncate text-right font-semibold text-ink">{value}</dd>
                 </div>
               ))}
+              <dt className="text-muted">Uploaded</dt>
+              <dd className="truncate text-right font-semibold text-ink">
+                <TimeAgo date={item.createdAt} mode="absolute" />
+              </dd>
             </dl>
             {item.kind !== "document" && (
               <form

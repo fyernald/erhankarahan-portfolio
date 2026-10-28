@@ -11,7 +11,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { DropdownMenu } from "@/components/ui/dropdown-menu";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useServerAction } from "@/hooks/use-server-action";
-import { formatDate, formatRelative } from "@/lib/utils/format";
+import { TimeAgo } from "@/components/ui/time-ago";
 import { MediaThumb } from "@/features/media/components/media-thumb";
 import { deletePost, setPostStatus } from "../actions";
 import type { PostListItem } from "../types";
@@ -78,9 +78,7 @@ export function PostsList({ posts, filtered }: { posts: PostListItem[]; filtered
                 <span className="hidden md:block">
                   <StatusBadge status={post.status} />
                 </span>
-                <span className="hidden text-sm text-body md:block" title={formatDate(post.updatedAt, "PPpp")}>
-                  {formatRelative(post.updatedAt)}
-                </span>
+                <TimeAgo date={post.updatedAt} className="hidden text-sm text-body md:block" />
                 <DropdownMenu
                   trigger={
                     <Button variant="ghost" size="icon-sm" aria-label={`Actions for ${post.title}`}>

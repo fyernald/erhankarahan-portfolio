@@ -10,7 +10,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useServerAction } from "@/hooks/use-server-action";
 import { cn } from "@/lib/utils/cn";
-import { formatDate, formatRelative } from "@/lib/utils/format";
+import { TimeAgo } from "@/components/ui/time-ago";
 import { deleteMessage, markMessageRead } from "../actions";
 import type { ContactMessage } from "../types";
 
@@ -61,9 +61,7 @@ export function Inbox({ messages: initialMessages }: { messages: ContactMessage[
                       <p className={cn("text-sm text-ink", message.readAt ? "font-semibold" : "font-extrabold")}>
                         {message.name} <span className="font-normal text-muted">&lt;{message.email}&gt;</span>
                       </p>
-                      <span className="text-xs text-muted" title={formatDate(message.createdAt, "PPpp")}>
-                        {formatRelative(message.createdAt)}
-                      </span>
+                      <TimeAgo date={message.createdAt} className="text-xs text-muted" />
                     </div>
                     <p className={cn("mt-1 text-[13px] text-body", !open && "line-clamp-1")}>{open ? null : message.message}</p>
                   </div>

@@ -7,13 +7,14 @@ import { env } from "@/lib/env";
 
 /** Private working directory for in-flight uploads (mode 0700). */
 export async function uploadTempDir(): Promise<string> {
-  const dir = env().UPLOAD_TMP_DIR ?? path.join(tmpdir(), "ek-uploads");
+  // Runtime-only paths: tell the bundler not to trace them.
+  const dir = env().UPLOAD_TMP_DIR ?? path.join(/*turbopackIgnore: true*/ tmpdir(), "ek-uploads");
   await mkdir(dir, { recursive: true, mode: 0o700 });
   return dir;
 }
 
 export async function tempFilePath(extension = "bin"): Promise<string> {
-  return path.join(await uploadTempDir(), `${randomUUID()}.${extension}`);
+  return path.join(/*turbopackIgnore: true*/ await uploadTempDir(), `${randomUUID()}.${extension}`);
 }
 
 /** Tracks temp files created during one upload so they are always removed. */

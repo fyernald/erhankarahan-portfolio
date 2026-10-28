@@ -58,3 +58,13 @@ describe("sanitizeRichHtml", () => {
     expect(sanitizeRichHtml(html)).toBe(html);
   });
 });
+
+describe("withResponsiveImages", () => {
+  it("adds an optimizer srcset to own media images only", async () => {
+    const { withResponsiveImages } = await import("@/lib/rich-text/responsive-images");
+    const html = withResponsiveImages(`<p>x</p><img loading="lazy" src="/media/images/${MEDIA_ID}.jpg" alt="a" />`);
+    expect(html).toContain('srcset="/_next/image?url=%2Fmedia%2Fimages%2F');
+    expect(html).toContain("1920w");
+    expect(html).toContain('alt="a"');
+  });
+});

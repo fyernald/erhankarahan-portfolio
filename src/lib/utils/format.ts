@@ -1,4 +1,4 @@
-import { format, formatDistanceToNowStrict } from "date-fns";
+import { format, formatDistanceToNowStrict, parseISO } from "date-fns";
 
 const BYTE_UNITS = ["B", "KB", "MB", "GB", "TB"] as const;
 
@@ -11,11 +11,12 @@ export function formatBytes(bytes: number, fractionDigits = 1): string {
 
 export function formatDate(value: Date | string | null | undefined, pattern = "MMM d, yyyy"): string {
   if (!value) return "—";
-  return format(typeof value === "string" ? new Date(value) : value, pattern);
+  // parseISO reads date-only strings ("2024-05-01") as local dates, avoiding off-by-one months.
+  return format(typeof value === "string" ? parseISO(value) : value, pattern);
 }
 
 export function formatRelative(value: Date | string): string {
-  return `${formatDistanceToNowStrict(typeof value === "string" ? new Date(value) : value)} ago`;
+  return `${formatDistanceToNowStrict(typeof value === "string" ? parseISO(value) : value)} ago`;
 }
 
 export function formatDuration(totalSeconds: number | null | undefined): string {

@@ -42,7 +42,7 @@ export async function receiveSingleFile(request: Request, maxBytes: number): Pro
     throw new UploadError(`File is too large. The limit is ${formatBytes(maxBytes)}.`, 413);
   }
 
-  const tempPath = path.join(await uploadTempDir(), `${randomUUID()}.upload`);
+  const tempPath = path.join(/*turbopackIgnore: true*/ await uploadTempDir(), `${randomUUID()}.upload`);
 
   try {
     return await parse(request, contentType, maxBytes, tempPath);

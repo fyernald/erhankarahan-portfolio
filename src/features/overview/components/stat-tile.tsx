@@ -13,7 +13,7 @@ type StatTileProps = {
 
 export function StatTile({ label, value, detail, icon: Icon, href }: StatTileProps) {
   return (
-    <Card className="group relative p-5 transition-shadow hover:shadow-popover">
+    <Card className="group relative p-4 transition-shadow hover:shadow-popover sm:p-5">
       <div className="flex items-start justify-between">
         <span className="flex size-10 items-center justify-center rounded-xl bg-mist text-ink">
           <Icon className="size-[18px]" />
