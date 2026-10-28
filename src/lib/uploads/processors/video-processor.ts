@@ -1,5 +1,6 @@
 import "server-only";
 import sharp from "sharp";
+import { env } from "@/lib/env";
 import { UploadError } from "../errors";
 import { MAX_VIDEO_SECONDS } from "../limits";
 import { runProcess } from "../run-process";
@@ -78,7 +79,7 @@ export class VideoProcessor implements MediaProcessor {
   private async probe(path: string, demuxer: string): Promise<ProbeResult> {
     try {
       const { stdout } = await runProcess(
-        "ffprobe",
+        env().FFPROBE_PATH,
         [
           "-hide_banner", "-v", "error", "-protocol_whitelist", "file", "-f", demuxer,
           "-show_entries", "format=format_name,duration:stream=codec_type,codec_name,width,height",
@@ -113,7 +114,7 @@ export class VideoProcessor implements MediaProcessor {
 
     try {
       await runProcess(
-        "ffmpeg",
+        env().FFMPEG_PATH,
         [
           ...safeInput(demuxer, input),
           "-map", "0:v:0", "-map", "0:a:0?",
@@ -134,7 +135,7 @@ export class VideoProcessor implements MediaProcessor {
     const posterPath = await temp.create("webp");
     try {
       await runProcess(
-        "ffmpeg",
+        env().FFMPEG_PATH,
         [
           "-ss", String(Math.min(1, duration / 2)),
           ...safeInput(demuxer, videoPath),
