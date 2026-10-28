@@ -1,0 +1,41 @@
+# Reverse proxy with automatic HTTPS (Let's Encrypt) for the public domain.
+{
+	email {$ACME_EMAIL}
+}
+
+www.{$SITE_DOMAIN} {
+	redir https://{$SITE_DOMAIN}{uri} permanent
+}
+
+{$SITE_DOMAIN} {
+	encode zstd gzip
+
+	# Large media uploads (videos up to 2 GB) are streamed straight to the app.
+	@uploads path /api/uploads
+	request_body @uploads {
+		max_size 2100MB
+	}
+	@other not path /api/uploads
+	request_body @other {
+		max_size 10MB
+	}
+
+	reverse_proxy app:3000 {
+		# Overwrite client-supplied values so the app can trust them for rate limiting.
+		header_up X-Real-IP {remote_host}
+		header_up X-Forwarded-For {remote_host}
+		transport http {
+			read_timeout 30m
+			write_timeout 30m
+		}
+	}
+
+	header {
+		-Server
+	}
+
+	log {
+		output stdout
+		format console
+	}
+}
