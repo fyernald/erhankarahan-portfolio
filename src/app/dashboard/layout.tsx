@@ -7,6 +7,8 @@ import { Topbar } from "@/components/dashboard/topbar";
 export const metadata: Metadata = {
   title: { default: "Dashboard", template: "%s · Dashboard" },
   robots: { index: false, follow: false },
+  // Chrome's own opt-out from translation; see src/lib/no-translate.ts.
+  other: { google: "notranslate" },
 };
 
 /**

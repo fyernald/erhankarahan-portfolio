@@ -5,7 +5,12 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { safeDashboardRedirect } from "@/lib/utils/safe-redirect";
 import { LoginForm } from "@/features/auth/components/login-form";
 
-export const metadata: Metadata = { title: "Sign in", robots: { index: false, follow: false } };
+export const metadata: Metadata = {
+  title: "Sign in",
+  robots: { index: false, follow: false },
+  // Chrome's own opt-out from translation; see src/lib/no-translate.ts.
+  other: { google: "notranslate" },
+};
 
 export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   const { next } = await searchParams;
