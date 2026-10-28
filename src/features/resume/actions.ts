@@ -9,7 +9,6 @@ import { getDb } from "@/lib/db";
 import { experiences, skills } from "@/lib/db/schema";
 import {
   experienceInputSchema,
-  reorderSchema,
   resumeIdSchema,
   skillInputSchema,
   updateExperienceSchema,
@@ -21,14 +20,6 @@ type OrderedTable = PgTable & { id: PgColumn; sortOrder: PgColumn };
 async function nextSortOrder(table: OrderedTable): Promise<number> {
   const [row] = await getDb().select({ max: sql<number>`coalesce(max(${table.sortOrder}), -1)` }).from(table);
   return Number(row.max) + 1;
-}
-
-async function reorder(table: OrderedTable, ids: string[]) {
-  await getDb().transaction(async (tx) => {
-    for (const [sortOrder, id] of ids.entries()) {
-      await tx.update(table).set({ sortOrder }).where(eq(table.id, id));
-    }
-  });
 }
 
 /* ------------------------------ Experiences ------------------------------ */
@@ -53,10 +44,6 @@ export const deleteExperience = adminAction(resumeIdSchema, async ({ id }) => {
   revalidateSite();
 });
 
-export const reorderExperiences = adminAction(reorderSchema, async ({ ids }) => {
-  await reorder(experiences, ids);
-  revalidateSite();
-});
 
 /* --------------------------------- Skills -------------------------------- */
 

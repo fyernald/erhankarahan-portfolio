@@ -4,6 +4,7 @@ import { useState } from "react";
 import { FileText, ImagePlus, RefreshCw, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { MediaKind } from "@/lib/uploads/types";
+import { cn } from "@/lib/utils/cn";
 import { formatBytes } from "@/lib/utils/format";
 import type { MediaItem } from "../types";
 import { MediaPickerDialog } from "./media-picker-dialog";
@@ -26,7 +27,7 @@ export function MediaField({ label, value, onChange, kinds = ["image"], hint, as
   const isDocument = kinds.length === 1 && kinds[0] === "document";
 
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className={cn("flex flex-col gap-1.5", !isDocument && aspect !== "video" && "w-full max-w-xs")}>
       <span className="text-[13px] font-semibold text-ink">{label}</span>
       {value ? (
         <div className="overflow-hidden rounded-xl border border-line bg-surface">

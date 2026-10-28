@@ -28,7 +28,6 @@ export const skillInputSchema = z.object({
 export const updateSkillSchema = skillInputSchema.extend({ id: idSchema });
 
 export const resumeIdSchema = z.object({ id: idSchema });
-export const reorderSchema = z.object({ ids: z.array(idSchema).min(1).max(500) });
 
 export type ExperienceInput = z.input<typeof experienceInputSchema>;
 export type SkillInput = z.input<typeof skillInputSchema>;

@@ -72,3 +72,8 @@ export async function nextProjectSortOrder(): Promise<number> {
   const [row] = await getDb().select({ max: sql<number>`coalesce(max(${projects.sortOrder}), -1)` }).from(projects);
   return Number(row.max) + 1;
 }
+
+export async function listProjectCategories(): Promise<string[]> {
+  const rows = await getDb().selectDistinct({ category: projects.category }).from(projects).orderBy(asc(projects.category));
+  return rows.map((row) => row.category);
+}

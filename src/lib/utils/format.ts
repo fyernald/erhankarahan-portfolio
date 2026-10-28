@@ -30,5 +30,6 @@ export function formatDuration(totalSeconds: number | null | undefined): string 
 /** "2019 — Present" style range used by the CV timeline. */
 export function formatDateRange(start: string, end: string | null): string {
   const startLabel = formatDate(start, "MMM yyyy");
+  if (end && formatDate(end, "MMM yyyy") === startLabel) return startLabel;
   return `${startLabel} — ${end ? formatDate(end, "MMM yyyy") : "Present"}`;
 }

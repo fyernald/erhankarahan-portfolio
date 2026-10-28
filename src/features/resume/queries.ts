@@ -8,7 +8,7 @@ export async function listExperiences(): Promise<Experience[]> {
   const rows = await getDb()
     .select()
     .from(experiences)
-    .orderBy(asc(experiences.sortOrder), desc(experiences.startDate));
+    .orderBy(desc(experiences.startDate), asc(experiences.sortOrder));
   return rows.map(({ createdAt, updatedAt, ...rest }) => {
     void createdAt;
     void updatedAt;

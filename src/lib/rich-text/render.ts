@@ -33,4 +33,4 @@ export function renderRichText(content: JSONContent): RenderedRichText {
   return { html, plainText, readingMinutes: Math.max(1, Math.round(words / WORDS_PER_MINUTE)) };
 }
 
-export const EMPTY_DOCUMENT: JSONContent = { type: "doc", content: [{ type: "paragraph" }] };
+
