@@ -60,11 +60,12 @@ export async function getPublishedPostBySlug(slug: string): Promise<PostDetail |
 }
 
 export async function listRelatedPosts(post: PostListItem, limit = 3): Promise<PostListItem[]> {
-  const sharesTag = post.tags.length ? arrayOverlaps(posts.tags, post.tags) : sql`false`;
+  // Postgres rejects a constant in ORDER BY, so only rank by shared tags when there are some.
+  const byRecency = desc(posts.publishedAt);
   const rows = await getDb().query.posts.findMany({
     where: and(publishedOnly, ne(posts.id, post.id)),
     with: { cover: true },
-    orderBy: [sql`(${sharesTag}) desc`, desc(posts.publishedAt)],
+    orderBy: post.tags.length ? [sql`(${arrayOverlaps(posts.tags, post.tags)}) desc`, byRecency] : [byRecency],
     limit,
   });
   return rows.map(toPostListItem);
