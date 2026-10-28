@@ -9,6 +9,9 @@ const booleanish = z
 const megabytes = (fallback: number) =>
   z.coerce.number().int().positive().default(fallback).transform((mb) => mb * 1024 * 1024);
 
+const gigabytes = (fallback: number) =>
+  z.coerce.number().int().positive().default(fallback).transform((gb) => gb * 1024 * 1024 * 1024);
+
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   APP_URL: z.url(),
@@ -32,6 +35,8 @@ const envSchema = z.object({
   UPLOAD_MAX_IMAGE_MB: megabytes(25),
   UPLOAD_MAX_VIDEO_MB: megabytes(2048),
   UPLOAD_MAX_DOCUMENT_MB: megabytes(25),
+  /** Total size of all stored media. Must match the storage service's cap (docker/seaweedfs/entrypoint.sh). */
+  STORAGE_LIMIT_GB: gigabytes(30),
   /** Full paths to ffmpeg/ffprobe, for when they are installed but not on the server's PATH. */
   FFMPEG_PATH: z.string().min(1).default("ffmpeg"),
   FFPROBE_PATH: z.string().min(1).default("ffprobe"),

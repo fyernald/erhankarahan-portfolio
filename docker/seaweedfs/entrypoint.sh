@@ -18,8 +18,13 @@ cat > /tmp/s3.json <<JSON
 }
 JSON
 
-# -volume.max=0 sizes the number of volumes from free disk space. With the default
-# 30 GB volume size a disk with less than ~30 GB free gets no writable volume at all
-# and every upload fails ("No writable volumes"), so use 1 GB volumes instead.
-exec weed server -dir=/data -ip.bind=0.0.0.0 -master.volumeSizeLimitMB=1024 -volume.max=0 \
+# Hard storage cap: STORAGE_LIMIT_GB volumes of 1 GB each (default 30 GB). A fixed
+# count also avoids -volume.max=0, which derives the count from a free-disk reading
+# that came out as zero on some hosts, leaving no writable volume ("No writable volumes").
+STORAGE_LIMIT_GB="${STORAGE_LIMIT_GB:-30}"
+case "$STORAGE_LIMIT_GB" in
+  '' | *[!0-9]* | 0) echo "STORAGE_LIMIT_GB must be a whole number of GB" >&2; exit 1 ;;
+esac
+
+exec weed server -dir=/data -ip.bind=0.0.0.0 -master.volumeSizeLimitMB=1024 -volume.max="$STORAGE_LIMIT_GB" \
   -s3 -s3.port=8333 -s3.config=/tmp/s3.json
