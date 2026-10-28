@@ -3,6 +3,7 @@ import { Mulish, Playfair_Display } from "next/font/google";
 import { headers } from "next/headers";
 import { connection } from "next/server";
 import { Toaster } from "@/components/ui/toaster";
+import { UploadTray } from "@/components/uploads/upload-tray";
 import { NO_TRANSLATE_HEADER } from "@/lib/no-translate";
 import "./globals.css";
 
@@ -39,6 +40,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" translate={noTranslate ? "no" : undefined} className={`${mulish.variable} ${playfair.variable}`}>
       <body className="min-h-dvh">
         {children}
+        <UploadTray />
         <Toaster />
       </body>
     </html>

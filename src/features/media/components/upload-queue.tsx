@@ -18,7 +18,7 @@ const STATUS_TEXT: Record<UploadTask["status"], string> = {
 };
 
 type UploadQueueProps = {
-  tasks: UploadTask[];
+  tasks: readonly UploadTask[];
   onCancel: (id: string) => void;
   onDismiss: (id: string) => void;
   className?: string;
