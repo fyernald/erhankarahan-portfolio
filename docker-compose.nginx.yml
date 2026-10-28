@@ -1,9 +1,11 @@
 # Override for hosts that terminate TLS with nginx instead of Caddy:
 #   docker compose -f docker-compose.yml -f docker-compose.nginx.yml up -d --build
 # Publishes the app on localhost only and keeps the Caddy service from starting.
+# Set APP_PORT in .env when 3000 is already taken on the host; the nginx upstream
+# in docker/nginx/erhankarahan.conf must use the same port.
 services:
   app:
-    ports: ["127.0.0.1:3000:3000"]
+    ports: ["127.0.0.1:${APP_PORT:-3000}:3000"]
 
   caddy:
     profiles: [caddy]
