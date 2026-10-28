@@ -47,7 +47,7 @@ src/
     storage/              S3 wrapper
 scripts/                  migrate, seed, create-admin (CLI)
 tests/                    Vitest unit tests
-docker/                   Caddyfile, SeaweedFS entrypoint
+docker/                   Caddyfile, nginx site config, SeaweedFS entrypoint
 ```
 
 ## Security model
@@ -143,6 +143,14 @@ Recommended VPS: 2 vCPU / 4 GB RAM (ClamAV alone uses ~1.5 GB), Ubuntu 24.04, Do
 6. Visit https://erhankarahan.com/login.
 
 **Updating**: `git pull && docker compose up -d --build`.
+
+**Using nginx instead of Caddy**: install `docker/nginx/erhankarahan.conf` as an nginx site and start the stack with the override, which publishes the app on `127.0.0.1:3000` and leaves Caddy stopped (Compose still requires `ACME_EMAIL` to have a value):
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.nginx.yml up -d --build
+```
+
+The config matches the Caddyfile: `/api/uploads` accepts bodies up to 2100 MB and streams them unbuffered with 30-minute timeouts, every other path is capped at 10 MB, and `X-Real-IP`/`X-Forwarded-For` are overwritten with the real client address. Without those directives nginx answers large uploads with `413` and lets clients spoof the IP used for rate limiting.
 
 **Backups** (run from cron):
 
