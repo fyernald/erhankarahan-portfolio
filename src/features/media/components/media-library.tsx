@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { FileText, Images } from "lucide-react";
@@ -28,13 +28,24 @@ export function MediaLibrary({ items: initialItems, filtered }: MediaLibraryProp
     setItems(initialItems);
   }
   const [selected, setSelected] = useState<MediaItem | null>(null);
+  const refreshPending = useRef(false);
   const uploader = useUploader({
     kinds: MEDIA_KINDS,
+    scope: "all",
     onUploaded: (item) => {
-      setItems((current) => [item, ...current]);
-      router.refresh();
+      setItems((current) => [item, ...current.filter((entry) => entry.id !== item.id)]);
+      refreshPending.current = true;
     },
   });
+
+  // Refresh server data (file count, pagination) only once nothing is uploading:
+  // if the app was redeployed meanwhile, Next.js turns a refresh into a full page
+  // load, which would cut off uploads still in flight.
+  useEffect(() => {
+    if (uploader.isBusy || !refreshPending.current) return;
+    refreshPending.current = false;
+    router.refresh();
+  }, [router, uploader.isBusy]);
 
   return (
     <div className="flex flex-col gap-6">
